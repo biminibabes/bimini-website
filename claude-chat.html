@@ -1,0 +1,526 @@
+<title>Bimini Line</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #F4F7F6;
+    --surface: #FFFFFF;
+    --ink: #16211F;
+    --muted: #5C6E6A;
+    --line: #DCE5E2;
+    --accent: #0E6E63;
+    --accent-soft: #E3EFEC;
+    --accent-ink: #FFFFFF;
+    --danger: #A03A2E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E1514;
+      --surface: #172120;
+      --ink: #E6EFEC;
+      --muted: #8AA09A;
+      --line: #26332F;
+      --accent: #45C0AC;
+      --accent-soft: #1B2B28;
+      --accent-ink: #06211C;
+      --danger: #E08072;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0E1514;
+    --surface: #172120;
+    --ink: #E6EFEC;
+    --muted: #8AA09A;
+    --line: #26332F;
+    --accent: #45C0AC;
+    --accent-soft: #1B2B28;
+    --accent-ink: #06211C;
+    --danger: #E08072;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    min-height: 100dvh;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  header.top {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding: 18px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .mark {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+  .mark h1 {
+    font-family: "Bricolage Grotesque", "Instrument Sans", sans-serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .mark .sub {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #name-chip {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.75rem;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+  #name-chip:hover { border-color: var(--accent); }
+  #name-chip:focus-visible, #send:focus-visible, #input:focus-visible,
+  .help summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .help {
+    margin: 14px 0 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+  .help summary {
+    cursor: pointer;
+    padding: 10px 14px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    list-style: none;
+  }
+  .help summary::-webkit-details-marker { display: none; }
+  .help summary::before { content: "+ "; color: var(--accent); }
+  .help[open] summary::before { content: "− "; }
+  .help .body {
+    padding: 2px 16px 14px;
+    font-size: 0.9rem;
+    color: var(--ink);
+  }
+  .help .body p { margin: 0.5em 0; max-width: 62ch; }
+  .help .body code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.82em;
+    background: var(--accent-soft);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+  .help .body .prompt-line {
+    display: block;
+    margin: 6px 0;
+    padding: 8px 10px;
+    background: var(--accent-soft);
+    border-radius: 6px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.78rem;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  main#messages {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 24px 0 16px;
+  }
+  .msg { display: flex; flex-direction: column; max-width: 85%; }
+  .msg.user { align-self: flex-end; align-items: flex-end; }
+  .msg.claude { align-self: flex-start; align-items: flex-start; }
+  .msg .meta {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .msg .bubble {
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .msg.user .bubble {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-bottom-right-radius: 4px;
+  }
+  .msg.claude .bubble {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-bottom-left-radius: 4px;
+  }
+  .msg.claude .meta::before {
+    content: "✳ ";
+    color: var(--accent);
+  }
+
+  .waiting {
+    align-self: flex-start;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    padding: 4px 2px;
+  }
+  .waiting .dots span {
+    animation: blink 1.4s infinite both;
+    color: var(--accent);
+  }
+  .waiting .dots span:nth-child(2) { animation-delay: 0.2s; }
+  .waiting .dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .waiting .dots span { animation: none; }
+  }
+
+  #banner {
+    margin: 0 0 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 0.85rem;
+  }
+  #banner.error { border-color: var(--danger); color: var(--danger); }
+
+  form#composer {
+    position: sticky;
+    bottom: 0;
+    background: var(--bg);
+    padding: 12px 0 18px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+  #input {
+    flex: 1;
+    resize: none;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 10px 14px;
+    min-height: 44px;
+    max-height: 160px;
+  }
+  #input::placeholder { color: var(--muted); }
+  #send {
+    font-family: "Instrument Sans", sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: none;
+    border-radius: 12px;
+    padding: 11px 20px;
+    cursor: pointer;
+    min-height: 44px;
+  }
+  #send:disabled { opacity: 0.55; cursor: default; }
+</style>
+
+<script type="application/json" id="chat-data">{"messages":[{"id":"seed-1","role":"claude","name":"Claude","ts":1756230000000,"text":"This line is open. Type below and hit Send — your message saves into this page and wakes the Claude session watching it, which replies right here. Open \"Connect a Claude session\" above to point Cowork or terminal Claude Code at this chat."}]}</script>
+
+<div class="wrap">
+  <header class="top">
+    <div class="mark">
+      <h1>Bimini Line</h1>
+      <span class="sub">bimini ⇄ claude</span>
+    </div>
+    <button id="name-chip" type="button" title="Change your display name">…</button>
+  </header>
+
+  <details class="help">
+    <summary>Connect a Claude session</summary>
+    <div class="body">
+      <p>Every message you send publishes a new version of this page. A Claude session <em>watching</em> the page is woken by that publish, reads your message, and publishes its reply into the chat — so replies work from any surface.</p>
+      <p><strong>Claude Cowork or claude.ai/code:</strong> paste this page's link into a session and say:</p>
+      <span class="prompt-line">Watch this artifact and reply to new chat messages in it: [page link]</span>
+      <p><strong>Terminal Claude Code:</strong> run <code>claude</code> in your terminal and give it the same instruction with the link.</p>
+      <p>The whole conversation lives in this page, so history follows the link wherever you open it.</p>
+    </div>
+  </details>
+
+  <main id="messages" aria-live="polite"></main>
+
+  <div id="banner" hidden></div>
+
+  <form id="composer">
+    <textarea id="input" placeholder="Message Claude…" rows="1" aria-label="Message"></textarea>
+    <button id="send" type="submit">Send</button>
+  </form>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var DRAFT_KEY = "bimini-line-draft";
+  var NAME_KEY = "bimini-line-name";
+
+  var dataEl = document.getElementById("chat-data");
+  var state = { messages: [] };
+  try { state = JSON.parse(dataEl.textContent); } catch (e) {}
+  if (!Array.isArray(state.messages)) state.messages = [];
+
+  var messagesEl = document.getElementById("messages");
+  var inputEl = document.getElementById("input");
+  var sendEl = document.getElementById("send");
+  var bannerEl = document.getElementById("banner");
+  var nameChip = document.getElementById("name-chip");
+  var composerEl = document.getElementById("composer");
+
+  function storageGet(key) {
+    try { return window.localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function storageSet(key, val) {
+    try { window.localStorage.setItem(key, val); } catch (e) {}
+  }
+  function sessionGet(key) {
+    try { return window.sessionStorage.getItem(key); } catch (e) { return null; }
+  }
+  function sessionSet(key, val) {
+    try { window.sessionStorage.setItem(key, val); } catch (e) {}
+  }
+  function sessionDel(key) {
+    try { window.sessionStorage.removeItem(key); } catch (e) {}
+  }
+
+  var displayName = storageGet(NAME_KEY) || "Bimini";
+  nameChip.textContent = displayName;
+  nameChip.addEventListener("click", function () {
+    var next = window.prompt("Display name for your messages:", displayName);
+    if (next && next.trim()) {
+      displayName = next.trim().slice(0, 40);
+      storageSet(NAME_KEY, displayName);
+      nameChip.textContent = displayName;
+    }
+  });
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  var timeFmt;
+  try {
+    timeFmt = new Intl.DateTimeFormat(undefined, {
+      month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+    });
+  } catch (e) { timeFmt = null; }
+
+  function fmtTime(ts) {
+    if (!ts) return "";
+    try { return timeFmt ? timeFmt.format(new Date(ts)) : new Date(ts).toLocaleString(); }
+    catch (e) { return ""; }
+  }
+
+  function render() {
+    var html = "";
+    for (var i = 0; i < state.messages.length; i++) {
+      var m = state.messages[i];
+      var role = m.role === "claude" ? "claude" : "user";
+      html += '<div class="msg ' + role + '">' +
+        '<div class="meta">' + escapeHtml(m.name || (role === "claude" ? "Claude" : "You")) +
+        (m.ts ? " · " + escapeHtml(fmtTime(m.ts)) : "") + "</div>" +
+        '<div class="bubble">' + escapeHtml(m.text || "") + "</div></div>";
+    }
+    var last = state.messages[state.messages.length - 1];
+    if (last && last.role !== "claude") {
+      html += '<div class="waiting">waiting for Claude ' +
+        '<span class="dots"><span>●</span><span>●</span><span>●</span></span></div>';
+    }
+    messagesEl.innerHTML = html;
+  }
+
+  function showBanner(text, isError) {
+    bannerEl.textContent = text;
+    bannerEl.className = isError ? "error" : "";
+    bannerEl.hidden = false;
+  }
+  function hideBanner() { bannerEl.hidden = true; }
+
+  function setSending(on) {
+    sendEl.disabled = on;
+    inputEl.disabled = on;
+    sendEl.textContent = on ? "Sending…" : "Send";
+  }
+
+  // --- restore a draft that didn't survive a reload ---
+  (function restoreDraft() {
+    var raw = sessionGet(DRAFT_KEY);
+    if (!raw) return;
+    var draft = null;
+    try { draft = JSON.parse(raw); } catch (e) {}
+    sessionDel(DRAFT_KEY);
+    if (!draft || !draft.text) return;
+    var landed = state.messages.some(function (m) { return m.id === draft.id; });
+    if (!landed) {
+      inputEl.value = draft.text;
+      showBanner("That message didn't save — it's back in the box below. Send it again.", false);
+    }
+  })();
+
+  render();
+  window.scrollTo(0, document.body.scrollHeight);
+
+  // --- capability wiring ---
+  var artifactNS = null;
+  var readOnly = false;
+
+  var sourcePromise = null;
+  function fetchSource() {
+    return fetch(window.location.href, { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.text() : null; })
+      .catch(function () { return null; });
+  }
+
+  if (window.claude && typeof window.claude.use === "function") {
+    sourcePromise = fetchSource();
+    window.claude.use("artifact").then(function (ns) {
+      artifactNS = ns;
+      if (!ns) {
+        showBanner("Sending isn't available in this view — open the page from claude.ai to chat.", false);
+        setSending(true);
+      }
+    });
+  } else {
+    showBanner("Open this page on claude.ai (or in the Claude app) to send messages.", false);
+    setSending(true);
+  }
+
+  // The data tag opener, assembled so this script never contains the
+  // literal itself — indexOf must find the real tag, not this code.
+  var TAG_OPEN = '<script type="application/json" id="chat' + '-data">';
+  var TAG_CLOSE = "<" + "/script>";
+
+  function withData(src, json) {
+    var at = src.indexOf(TAG_OPEN);
+    if (at < 0) return null;
+    var start = at + TAG_OPEN.length;
+    var end = src.indexOf(TAG_CLOSE, start);
+    if (end < 0) return null;
+    return src.slice(0, start) + json + src.slice(end);
+  }
+
+  function rid() {
+    return "m-" + Date.now().toString(36) + "-" + Math.floor(Math.random() * 1e6).toString(36);
+  }
+
+  function send() {
+    var text = inputEl.value.replace(/\s+$/, "");
+    if (!text.trim() || readOnly) return;
+    if (!artifactNS) {
+      showBanner("Still connecting to the page runtime — try again in a second.", false);
+      return;
+    }
+    hideBanner();
+
+    var msg = { id: rid(), role: "user", name: displayName, ts: Date.now(), text: text };
+    sessionSet(DRAFT_KEY, JSON.stringify({ id: msg.id, text: text }));
+
+    var nextMessages = state.messages.concat([msg]);
+    state.messages = nextMessages;
+    render();
+    window.scrollTo(0, document.body.scrollHeight);
+    setSending(true);
+
+    sourcePromise
+      .then(function (src) { return src || fetchSource(); })
+      .then(function (src) {
+        if (!src) throw { code: "no_source" };
+        var json = JSON.stringify({ messages: nextMessages }).replace(/</g, "\\u003c");
+        var doc = withData(src, json);
+        if (!doc) throw { code: "no_source" };
+        return artifactNS.publish(doc);
+      })
+      .then(function () {
+        // Success: the shell reloads this view to the new version.
+        // The reload renders the sent message; the draft check clears it.
+      })
+      .catch(function (err) {
+        var code = err && err.code;
+        state.messages = state.messages.filter(function (m) { return m.id !== msg.id; });
+        if (code === "conflict") {
+          // A newer version won; the shell is reloading this view.
+          // The stashed draft comes back in the composer after reload.
+          return;
+        }
+        setSending(false);
+        inputEl.value = text;
+        render();
+        if (code === "not_writer" || code === "not_granted" ||
+            code === "not_declared" || code === "consent_required") {
+          readOnly = true;
+          setSending(true);
+          showBanner("This view is read-only — you can follow the chat but not send here.", false);
+        } else if (code === "rate_limited") {
+          showBanner("Sending too fast — give it a few seconds and try again.", true);
+        } else if (code === "no_source") {
+          showBanner("Couldn't read the page to save your message. Reload and try again.", true);
+        } else {
+          showBanner("That didn't send. Your message is still in the box — try again.", true);
+        }
+      });
+  }
+
+  composerEl.addEventListener("submit", function (e) {
+    e.preventDefault();
+    send();
+  });
+  inputEl.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  });
+  inputEl.addEventListener("input", function () {
+    inputEl.style.height = "auto";
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 160) + "px";
+  });
+})();
+</script>
