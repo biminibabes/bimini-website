@@ -275,9 +275,10 @@
     <summary>Connect a Claude session</summary>
     <div class="body">
       <p>Every message you send publishes a new version of this page. A Claude session <em>watching</em> the page is woken by that publish, reads your message, and publishes its reply into the chat — so replies work from any surface.</p>
-      <p><strong>Claude Cowork or claude.ai/code:</strong> paste this page's link into a session and say:</p>
-      <span class="prompt-line">Watch this artifact and reply to new chat messages in it: [page link]</span>
-      <p><strong>Terminal Claude Code:</strong> run <code>claude</code> in your terminal and give it the same instruction with the link.</p>
+      <p><strong>Terminal Claude Code:</strong> run this in your terminal, then leave the session open — it replies to every message:</p>
+      <span class="prompt-line">claude --watch-artifact https://claude.ai/code/artifact/bbf052e3-a61c-4389-9ae8-3c030dd5d696</span>
+      <p><strong>Claude Cowork:</strong> paste this into a session and it will pick up the watch:</p>
+      <span class="prompt-line">Watch this artifact and reply to new chat messages in it: https://claude.ai/code/artifact/bbf052e3-a61c-4389-9ae8-3c030dd5d696</span>
       <p>The whole conversation lives in this page, so history follows the link wherever you open it.</p>
     </div>
   </details>
