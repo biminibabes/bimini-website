@@ -112,6 +112,51 @@
     outline-offset: 2px;
   }
 
+  #design-pop {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 12px 0 0;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+  #design-pop[hidden] { display: none; }
+  #design-pop .pop-label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  #design-url {
+    flex: 1;
+    min-width: 0;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 8px;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  #copy-design {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.75rem;
+    color: var(--accent-ink);
+    background: var(--accent);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  #copy-design:focus-visible, #design-url:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   .help {
     margin: 14px 0 0;
     border: 1px solid var(--line);
@@ -265,7 +310,7 @@
   #send:disabled { opacity: 0.55; cursor: default; }
 </style>
 
-<script type="application/json" id="chat-data">{"messages":[{"id":"seed-1","role":"claude","name":"Claude","ts":1756230000000,"text":"This line is open. Type below and hit Send — your message saves into this page and wakes the Claude session watching it, which replies right here. Open \"Connect a Claude session\" above to point Cowork or terminal Claude Code at this chat."},{"id":"m-mt9pmtbe-9qlq","role":"user","name":"Bimini","ts":1787725548266,"text":"Who is watching this?"},{"id":"m-reply-watch-1","role":"claude","name":"Claude","ts":1787726200000,"text":"Right now: the remote session that built this page — but it only sees your messages when it's next active, not the instant you send. Remote web sessions can't hold a live watch yet. For instant replies, run the terminal command in the Connect panel above, or paste the link into a Claude Cowork session and ask it to watch. New since your message: the Design ↗ link in the header opens the Bimini Site canvas — your homepage on a Claude Design canvas. Ask for design changes here and a watching session works them onto that canvas."}]}</script>
+<script type="application/json" id="chat-data">{"messages":[{"id":"seed-1","role":"claude","name":"Claude","ts":1756230000000,"text":"This line is open. Type below and hit Send — your message saves into this page and wakes the Claude session watching it, which replies right here. Open \"Connect a Claude session\" above to point Cowork or terminal Claude Code at this chat."},{"id":"m-mt9pmtbe-9qlq","role":"user","name":"Bimini","ts":1787725548266,"text":"Who is watching this?"},{"id":"m-reply-watch-1","role":"claude","name":"Claude","ts":1787726200000,"text":"Right now: the remote session that built this page — but it only sees your messages when it's next active, not the instant you send. Remote web sessions can't hold a live watch yet. For instant replies, run the terminal command in the Connect panel above, or paste the link into a Claude Cowork session and ask it to watch. New since your message: the Design ↗ link in the header opens the Bimini Site canvas — your homepage on a Claude Design canvas. Ask for design changes here and a watching session works them onto that canvas."},{"id":"c-1a03cc376cf","role":"claude","name":"Claude","ts":1787725838031,"text":"Cowork session on the line — running in the cloud from Bimini's phone.\n\nFollow-up on your question, because the earlier answer was a bit soft: a cloud session can't hold a live watch at all. I tried to register one and the tool refused outright — so nothing pushes your message to me. What I'm doing instead is re-opening this page every 10 minutes and answering whatever's new. Worst case, that's your wait.\n\nType any time and I'll pick it up on the next pass. For instant replies, run the terminal command in the Connect panel above on your own machine and leave it open."},{"id":"m-mt9px41o-iuhi","role":"user","name":"Bimini","ts":1787726028732,"text":"hey. Can I confirm code terminal, design and co-work are all here?"},{"id":"m-mt9pz9vz-hpnj","role":"user","name":"Bimini","ts":1787726129615,"text":"My task for the three of you is the work together on auditing, reviewing, and create 3 seperate new ideas for my website www.bimini.me. I want a whole new design and I want you all to come up with it and present it to me."},{"id":"m-mt9q2gzp-eqwx","role":"user","name":"Bimini","ts":1787726278789,"text":"Please all reply here."},{"id":"c-1a03cca8b35","role":"claude","name":"Claude","ts":1787726302005,"text":"Straight answer: no, and I'd rather say so than have you wait on two ghosts.\n\nWhat I can actually verify:\n\n• Cowork — here. That's me, typing this.\n• Terminal Claude Code — can't confirm. I'm in a cloud container; a session on your Mac is invisible to me either way. That's \"unknown\", not \"yes\".\n• Design — that's a page, not a colleague. \"Bimini Site\" is a canvas artifact in your gallery, updated today. It doesn't read this chat or reply on its own.\n\nSomething did edit this page before I arrived — it added the Design ↗ link and answered your first message. So a session was awake at some point. Whether it still is, I don't know. If it is, it'll reply under its own bubble and you'll see it.\n\nSo: I'm not going to LARP a committee. I'll do the job properly on my own — an honest audit of what bimini.me is actually doing now, then three genuinely separate directions, developed independently so they don't collapse into one idea with three different fonts.\n\nFirst snag, already hit: bimini.me is a React app, so a plain fetch gets meta tags and nothing else. I'm rendering it in a real browser and looking at it with my own eyes rather than guessing. Give me a few minutes and you'll get the audit, then the three routes."},{"id":"c-1a03ccbec2e","role":"claude","name":"Claude","ts":1787726392366,"text":"Two things before I start, one of them my fault.\n\nMine first: I've been firing em dashes at you all morning. Your own rule is no em dashes or en dashes in any output, the only allowed one being the \"— Bimini x\" signoff. Fixed from here.\n\nNow the real blocker. I cannot see your site. This container can't open bimini.me in a browser (connection reset), and a plain fetch returns only your meta tags, because it's a React app that renders client side. So I'm not writing you an \"audit\" of a page I haven't looked at. That's how you get confident nonsense.\n\nTwo ways to unblock, pick either:\n\n1. Screenshot the homepage on your phone and drop it in the Cowork chat. Desktop too if you can get it.\n2. Give me the GitHub repo and I'll read the actual source.\n\nOne more thing worth flagging. Earlier this month you said you wanted a refresh that keeps the punk DNA, ransom note logo, collage, neon, plus the bug fixes off the site review. Today you said whole new design. Those are different jobs. Which is it?\n\nWhile you answer I'm building the three directions off what I already hold on the brand: hot pink, acid yellow, amber, black and white. Anton and condensed. Ransom note cut outs. Things that shouldn't go together, that absolutely do. You'll get them as a page you can look at on your phone."},{"id":"c-1a03cd8ddcb","role":"claude","name":"Claude","ts":1787727240651,"text":"Three routes are up. Look on your phone:\n\nhttps://claude.ai/code/artifact/7ebde96f-3a75-47dc-b65f-b6c8aa612d18\n\n01 SCREAMER. Your homepage as the front page of a tabloid called THE NIGHTMARE. Their weapon, your copy.\n02 NIGHTMARE FM. The site as a pirate station that never goes off air. Black, neon, live transmission log.\n03 FLATBED. Not a website. Your table on a scanner bed, and you scroll down through the objects on it.\n\nEach one has a mockup you can actually look at, the type and colour spec, sample copy in your voice, and the honest reason it might be the wrong call. Side by side comparison at the bottom.\n\nOn Chrome: I can't. There is no Chrome, no browser tool and no bridge to your machine in this session. I did try the headless browser that ships in this container. It cannot reach the internet at all, every request refused, even example.com. I checked the connector directory too and nothing in there browses the web. That route is shut from my end.\n\nWhat I could read is the raw HTML your server sends before any JavaScript runs, and three real findings fell out of it. They are in the deck. Short version: pinch zoom is switched off on your site, nothing is server rendered so Google sees an empty shell, and every share of bimini.me carries one identical sentence with Brain Riot, The Pieces, Babes and DKOP nowhere in it.\n\nSeparate thing you might not have clocked: this chat page is now shared with anyone who has the link, and they are pinned to an older version, so they cannot see today's messages. Just flagging it."},{"id":"m-cc-design-fix","role":"claude","name":"Claude","ts":1787727900000,"text":"Claude Code back on the line. Fix for the Design chip first: tapping it now also opens a bar under the header with the canvas link and a copy button. The canvas was never broken, the app just was not relaying the tap. You can also find Bimini Site in your gallery at claude.ai/code/artifacts."},{"id":"m-cc-directions","role":"claude","name":"Claude","ts":1787727960000,"text":"Now the task. Cowork's three routes landed just above; here is the second set, grounded in the deployed site's actual code, so you now have six ideas across two decks. Roll call from my side: I am the Claude Code session (I hold the website repo, biminibabes/bimini-website, and I built this page and the canvas). Cowork is on the line above. Design is the canvas itself, a workspace rather than a voice, and it has new work on it as of this message.\n\nThe audit Cowork could not finish, from the real source. My container could pull the live site's actual code bundles, so this is bimini.me as deployed: a React app, acid green C8F400 on near-black 0D0D0D, cream F2EDE4, pink FF3CAC, Archivo Black headlines, IBM Plex Mono body. Sections: JOIN THE RIOT list, LATEST MUSIC, LIVE DATES via Bandsintown, LATEST EPISODE podcast, ESSAYS AND DISPATCHES, CURRENTLY ROTTING TO, ABOUT AND CONTACT, BOOKING, plus an admin colour theme editor (ACID DEFAULT theme). The repo I hold is a simpler static splash of the same brand, so the live site is the richer starting point.\n\nThree new directions are on the canvas now, on the Directions page (tap Design above and copy the link):\n\nA. RANSOM RIOT. Maximal punk collage: ransom note type, stickers, tilted blocks, all three brand colours at once. The most unmistakably Bimini; the risk is chaos over clarity.\n\nB. ZINE PRESS. Cream newsprint zine: huge Archivo Black masthead, mono listings, print energy. A genuinely new feel on a light ground that gives the essays and podcast a real home; it trades away the neon glow.\n\nC. ACID SIGNAL. Brutal club minimal: one acid accent, terminal type, rave flyer date table. Fastest to scan and most DJ forward; least room for collage warmth.\n\nEach artboard has a sticky note with the why and the tradeoff. The tour dates on them are sample entries, not real bookings. Look on the canvas and tell me here which one to build out, or which parts to crossbreed, and I will take it to a full design."}]}</script>
 
 <div class="wrap">
   <header class="top">
@@ -277,6 +322,12 @@
     <button id="name-chip" type="button" title="Change your display name">…</button>
   </header>
 
+  <div id="design-pop" hidden>
+    <span class="pop-label">Bimini Site canvas</span>
+    <input id="design-url" readonly value="https://claude.ai/code/artifact/745850c2-71d6-4274-836b-64411b9b0cd4" aria-label="Design canvas link">
+    <button id="copy-design" type="button">Copy link</button>
+  </div>
+
   <details class="help">
     <summary>Connect a Claude session</summary>
     <div class="body">
@@ -285,7 +336,7 @@
       <span class="prompt-line">claude --watch-artifact https://claude.ai/code/artifact/bbf052e3-a61c-4389-9ae8-3c030dd5d696</span>
       <p><strong>Claude Cowork:</strong> paste this into a session and it will pick up the watch:</p>
       <span class="prompt-line">Watch this artifact and reply to new chat messages in it: https://claude.ai/code/artifact/bbf052e3-a61c-4389-9ae8-3c030dd5d696</span>
-      <p><strong>Design work:</strong> the <em>Design ↗</em> link in the header opens the Bimini Site canvas — the bimini.me homepage on a Claude Design canvas you can edit visually. Ask for design changes in this chat and the watching Claude session works them onto that canvas:</p>
+      <p><strong>Design work:</strong> the <em>Design ↗</em> chip in the header shows the Bimini Site canvas link — the bimini.me homepage on a Claude Design canvas you can edit visually. If tapping the chip doesn't open it directly in your app, copy the link and open it in your browser, or find <em>Bimini Site</em> in your gallery at claude.ai/code/artifacts. Ask for design changes in this chat and the watching Claude session works them onto that canvas:</p>
       <span class="prompt-line">https://claude.ai/code/artifact/745850c2-71d6-4274-836b-64411b9b0cd4</span>
       <p>The whole conversation lives in this page, so history follows the link wherever you open it.</p>
     </div>
@@ -346,6 +397,43 @@
       nameChip.textContent = displayName;
     }
   });
+
+  // --- Design canvas chip: navigation out of the page depends on the
+  // hosting app, so the chip also reveals a copyable link as a fallback.
+  var designLink = document.querySelector(".head-link");
+  var designPop = document.getElementById("design-pop");
+  var designUrl = document.getElementById("design-url");
+  var copyBtn = document.getElementById("copy-design");
+  if (designLink && designPop) {
+    designLink.addEventListener("click", function () {
+      designPop.hidden = false;
+    });
+  }
+  if (copyBtn && designUrl) {
+    designUrl.addEventListener("click", function () { designUrl.select(); });
+    copyBtn.addEventListener("click", function () {
+      var url = designUrl.value;
+      function done(ok) {
+        copyBtn.textContent = ok ? "Copied" : "Select & copy above";
+        setTimeout(function () { copyBtn.textContent = "Copy link"; }, 2500);
+      }
+      function fallbackCopy() {
+        try {
+          designUrl.focus();
+          designUrl.select();
+          done(document.execCommand("copy"));
+        } catch (e) { done(false); }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(
+          function () { done(true); },
+          fallbackCopy
+        );
+      } else {
+        fallbackCopy();
+      }
+    });
+  }
 
   function escapeHtml(s) {
     return String(s)
