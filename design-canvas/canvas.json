@@ -1,0 +1,10 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "title": "Desktop", "x": 0, "y": 0, "w": 860, "h": 1760 },
+    { "file": "Phone.dc.html", "title": "Phone", "x": 960, "y": 0, "w": 390, "h": 1600 }
+  ],
+  "annotations": [
+    { "id": "site-note", "x": 0, "y": -200, "w": 320, "text": "Current bimini.me homepage, recreated from the site source in the repo.\nThe distressed logo image and the Laylo sign-up embed are placeholders here.\nAsk for changes in the Bimini Line chat and they land on this canvas." }
+  ],
+  "launch": { "view": "canvas" }
+}

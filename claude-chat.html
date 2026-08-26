@@ -92,7 +92,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  #name-chip {
+  #name-chip, .head-link {
     font-family: "IBM Plex Mono", ui-monospace, monospace;
     font-size: 0.75rem;
     color: var(--ink);
@@ -101,8 +101,11 @@
     border-radius: 999px;
     padding: 5px 12px;
     cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
   }
-  #name-chip:hover { border-color: var(--accent); }
+  #name-chip:hover, .head-link:hover { border-color: var(--accent); }
+  .head-link { color: var(--accent); }
   #name-chip:focus-visible, #send:focus-visible, #input:focus-visible,
   .help summary:focus-visible {
     outline: 2px solid var(--accent);
@@ -178,6 +181,8 @@
     white-space: pre-wrap;
     overflow-wrap: anywhere;
   }
+  .msg .bubble a { color: inherit; text-decoration: underline; }
+  .msg.claude .bubble a { color: var(--accent); }
   .msg.user .bubble {
     background: var(--accent);
     color: var(--accent-ink);
@@ -260,7 +265,7 @@
   #send:disabled { opacity: 0.55; cursor: default; }
 </style>
 
-<script type="application/json" id="chat-data">{"messages":[{"id":"seed-1","role":"claude","name":"Claude","ts":1756230000000,"text":"This line is open. Type below and hit Send — your message saves into this page and wakes the Claude session watching it, which replies right here. Open \"Connect a Claude session\" above to point Cowork or terminal Claude Code at this chat."}]}</script>
+<script type="application/json" id="chat-data">{"messages":[{"id":"seed-1","role":"claude","name":"Claude","ts":1756230000000,"text":"This line is open. Type below and hit Send — your message saves into this page and wakes the Claude session watching it, which replies right here. Open \"Connect a Claude session\" above to point Cowork or terminal Claude Code at this chat."},{"id":"m-mt9pmtbe-9qlq","role":"user","name":"Bimini","ts":1787725548266,"text":"Who is watching this?"},{"id":"m-reply-watch-1","role":"claude","name":"Claude","ts":1787726200000,"text":"Right now: the remote session that built this page — but it only sees your messages when it's next active, not the instant you send. Remote web sessions can't hold a live watch yet. For instant replies, run the terminal command in the Connect panel above, or paste the link into a Claude Cowork session and ask it to watch. New since your message: the Design ↗ link in the header opens the Bimini Site canvas — your homepage on a Claude Design canvas. Ask for design changes here and a watching session works them onto that canvas."}]}</script>
 
 <div class="wrap">
   <header class="top">
@@ -268,6 +273,7 @@
       <h1>Bimini Line</h1>
       <span class="sub">bimini ⇄ claude</span>
     </div>
+    <a class="head-link" href="https://claude.ai/code/artifact/745850c2-71d6-4274-836b-64411b9b0cd4" target="_blank" rel="noopener">Design ↗</a>
     <button id="name-chip" type="button" title="Change your display name">…</button>
   </header>
 
@@ -279,6 +285,8 @@
       <span class="prompt-line">claude --watch-artifact https://claude.ai/code/artifact/bbf052e3-a61c-4389-9ae8-3c030dd5d696</span>
       <p><strong>Claude Cowork:</strong> paste this into a session and it will pick up the watch:</p>
       <span class="prompt-line">Watch this artifact and reply to new chat messages in it: https://claude.ai/code/artifact/bbf052e3-a61c-4389-9ae8-3c030dd5d696</span>
+      <p><strong>Design work:</strong> the <em>Design ↗</em> link in the header opens the Bimini Site canvas — the bimini.me homepage on a Claude Design canvas you can edit visually. Ask for design changes in this chat and the watching Claude session works them onto that canvas:</p>
+      <span class="prompt-line">https://claude.ai/code/artifact/745850c2-71d6-4274-836b-64411b9b0cd4</span>
       <p>The whole conversation lives in this page, so history follows the link wherever you open it.</p>
     </div>
   </details>
@@ -347,6 +355,13 @@
       .replace(/"/g, "&quot;");
   }
 
+  // Runs on already-escaped text, so the match set excludes & and quotes.
+  function linkify(escaped) {
+    return escaped.replace(/https?:\/\/[A-Za-z0-9._~:/?#\[\]@!$'()*+,;=%-]+/g, function (u) {
+      return '<a href="' + u + '" target="_blank" rel="noopener">' + u + "</a>";
+    });
+  }
+
   var timeFmt;
   try {
     timeFmt = new Intl.DateTimeFormat(undefined, {
@@ -368,7 +383,7 @@
       html += '<div class="msg ' + role + '">' +
         '<div class="meta">' + escapeHtml(m.name || (role === "claude" ? "Claude" : "You")) +
         (m.ts ? " · " + escapeHtml(fmtTime(m.ts)) : "") + "</div>" +
-        '<div class="bubble">' + escapeHtml(m.text || "") + "</div></div>";
+        '<div class="bubble">' + linkify(escapeHtml(m.text || "")) + "</div></div>";
     }
     var last = state.messages[state.messages.length - 1];
     if (last && last.role !== "claude") {
