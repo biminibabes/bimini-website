@@ -31,6 +31,13 @@ Your personal website - owned, controlled, and updated by you.
 3. Add your latest releases, Spotify embeds, etc.
 4. Save and push to GitHub
 
+### Update Latest Reel
+1. Open `index.html`
+2. Find the section with `id="reel-section"`
+3. Replace the `data-instgrm-permalink` URL on the `<blockquote>` (and the fallback link below it) with your new reel's URL — use the plain `https://www.instagram.com/reel/POST_ID/` link, not a share link with a `?stkn=` token
+4. Save and push to GitHub
+5. The reel only displays if the Instagram post is public — private or deleted posts will show blank
+
 ### Change Colors
 1. Open `styles.css`
 2. Edit the color variables at the top:

@@ -60,6 +60,7 @@
             <nav class="main-nav">
                 <button class="nav-button active" data-section="music">LATEST MUSIC</button>
                 <button class="nav-button" data-section="tour">TOUR DATES</button>
+                <button class="nav-button" data-section="reel">LATEST REEL</button>
             </nav>
 
             <section id="music-section" class="content-section active">
@@ -77,6 +78,17 @@
                     <p>Tour dates coming soon. Join the mailing list for announcements.</p>
                 </div>
             </section>
+
+            <section id="reel-section" class="content-section">
+                <!-- Add your latest Instagram reel here: swap data-instgrm-permalink below -->
+                <div class="reel-content">
+                    <h3>Latest Reel</h3>
+                    <div class="instagram-embed-wrapper">
+                        <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/reel/DbyJNRdPyCj/" data-instgrm-version="14"></blockquote>
+                    </div>
+                    <p class="reel-fallback-link"><a href="https://www.instagram.com/reel/DbyJNRdPyCj/" target="_blank" rel="noopener">View on Instagram ↗</a></p>
+                </div>
+            </section>
         </main>
 
         <footer>
@@ -86,5 +98,6 @@
     </div>
 
     <script src="script.js"></script>
+    <script async src="//www.instagram.com/embed.js"></script>
 </body>
 </html>
