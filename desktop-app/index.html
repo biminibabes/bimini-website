@@ -1,0 +1,449 @@
+<title>Bimini Flyerwall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Karla:ital,wght@0,400;0,600;0,700;1,400&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* Single-look design: always dark, like a club wall at night */
+  :root {
+    color-scheme: dark;
+    --wall: #0d0b0e;
+    --wall-2: #171318;
+    --brick: #1f1a20;
+    --ink: #0b0a0c;
+    --chalk: #efeae6;
+    --dim: #938a96;
+    --pink: #ff1493;
+    --yellow: #ccff00;
+    --orange: #ffa500;
+    --tape: rgba(239, 234, 214, 0.55);
+    --display: "Bebas Neue", "Impact", "Arial Narrow", sans-serif;
+    --body: "Karla", "Helvetica Neue", Arial, sans-serif;
+    --mono: "Space Mono", ui-monospace, "Menlo", monospace;
+    --marker: "Permanent Marker", "Comic Sans MS", cursive;
+    --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  html, body { height: 100%; }
+  body {
+    background: var(--wall);
+    color: var(--chalk);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: var(--grain); opacity: .35; mix-blend-mode: overlay;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+  kbd {
+    font-family: var(--mono); font-size: 11px; padding: 1px 6px;
+    border: 1.5px solid currentColor; border-radius: 3px; opacity: .8;
+  }
+
+  .app {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: 260px minmax(0, 1fr);
+    min-height: 100%;
+  }
+
+  /* ---------- SETLIST SIDEBAR ---------- */
+  .setlist {
+    background: var(--wall-2);
+    border-right: 2px dashed #3a313c;
+    padding: 22px 18px 18px;
+    display: flex; flex-direction: column; gap: 22px;
+  }
+  .brand { display: flex; align-items: baseline; gap: 8px; }
+  .brand b {
+    font-family: var(--display); font-size: 40px; letter-spacing: .06em; line-height: 1;
+    color: var(--pink); text-shadow: 0 0 18px rgba(255, 20, 147, .55);
+  }
+  .brand span { font-family: var(--marker); color: var(--yellow); font-size: 15px; transform: rotate(-4deg); display: inline-block; }
+  .btn-new {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--yellow); color: var(--ink); border: 0;
+    font-family: var(--display); font-size: 22px; letter-spacing: .08em;
+    padding: 8px 14px; transform: rotate(-1deg); white-space: nowrap;
+    box-shadow: 4px 4px 0 var(--pink);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .btn-new:hover { transform: rotate(0) translate(-1px, -1px); box-shadow: 6px 6px 0 var(--pink); }
+  .side-h {
+    font-family: var(--marker); font-size: 17px; color: var(--orange);
+    margin: 0 0 8px; transform: rotate(-1.5deg); transform-origin: left;
+  }
+  .side-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .side-list button {
+    width: 100%; text-align: left; background: none; border: 0; padding: 7px 8px;
+    display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: baseline;
+    border-radius: 2px;
+  }
+  .side-list button:hover { background: #231d25; }
+  .side-list .t { font-weight: 600; }
+  .side-list .m { font-family: var(--mono); font-size: 11px; color: var(--dim); grid-column: 1 / -1; }
+  .side-list .when { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+  .side-list .scratched .t { text-decoration: line-through; text-decoration-color: var(--pink); text-decoration-thickness: 2px; color: var(--dim); }
+  .pill {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+    padding: 1px 6px; border-radius: 2px;
+  }
+  .pill.done { background: #2b3a12; color: var(--yellow); }
+  .pill.needs { background: var(--pink); color: var(--ink); font-weight: 700; }
+  .pill.live { background: #3d2a0a; color: var(--orange); }
+
+  .meters { margin-top: auto; display: grid; gap: 12px; }
+  .meter-row { display: grid; grid-template-columns: 44px 1fr 40px; align-items: center; gap: 8px; }
+  .meter-row .lbl { font-family: var(--mono); font-size: 11px; color: var(--dim); text-transform: uppercase; }
+  .meter-row .pct { font-family: var(--display); font-size: 20px; text-align: right; font-variant-numeric: tabular-nums; }
+  .vu { display: grid; grid-template-columns: repeat(16, 1fr); gap: 2px; height: 14px; }
+  .vu i { background: #2a232c; }
+  .vu i.on { background: var(--yellow); }
+  .vu i.on.hot { background: var(--orange); }
+  .vu i.on.red { background: var(--pink); box-shadow: 0 0 6px var(--pink); }
+  .meter-note { font-family: var(--mono); font-size: 11px; color: var(--dim); margin: 0; }
+  .meter-note b { color: var(--pink); font-weight: 700; }
+  .sample-tag { font-family: var(--mono); font-size: 10px; color: var(--dim); border: 1px dashed #4a404c; padding: 2px 6px; align-self: flex-start; }
+
+  /* ---------- WALL ---------- */
+  .wall {
+    padding-block: 32px 48px; padding-inline: clamp(16px, 4vw, 48px);
+    background:
+      repeating-linear-gradient(0deg, transparent 0 46px, rgba(0,0,0,.35) 46px 48px),
+      repeating-linear-gradient(90deg, transparent 0 98px, rgba(0,0,0,.25) 98px 100px),
+      var(--brick);
+    display: grid; gap: 40px; align-content: start;
+  }
+
+  .flyer {
+    position: relative; color: var(--ink);
+    background: var(--yellow);
+    box-shadow: 0 18px 30px rgba(0,0,0,.55);
+  }
+  .flyer::after { /* photocopy grain on the paper */
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: var(--grain); opacity: .5; mix-blend-mode: multiply;
+  }
+  .tape {
+    position: absolute; width: 96px; height: 26px; background: var(--tape);
+    top: -12px; z-index: 2; box-shadow: 0 1px 2px rgba(0,0,0,.2);
+  }
+  .tape.l { left: 18px; transform: rotate(-8deg); }
+  .tape.r { right: 18px; transform: rotate(6deg); }
+
+  /* hero flyer */
+  .hero { max-width: 900px; padding: 34px clamp(20px, 4vw, 44px) 26px; transform: rotate(-0.6deg); }
+  .hero .eyebrow { font-family: var(--marker); font-size: 18px; margin: 0; }
+  .hero h1 {
+    font-family: var(--display); font-weight: 400; margin: 2px 0 6px;
+    font-size: clamp(52px, 9vw, 112px); line-height: .88; letter-spacing: .01em;
+    text-wrap: balance;
+  }
+  .hero h1 em {
+    font-style: normal; background: var(--ink); color: var(--yellow);
+    padding: 0 .12em; display: inline-block; transform: rotate(1.2deg);
+  }
+  .hero .lede { font-size: 17px; max-width: 52ch; margin: 0 0 22px; font-weight: 600; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 18px 26px; align-items: flex-start; }
+  .act { display: grid; gap: 6px; }
+  .act small { font-family: var(--mono); font-size: 11px; }
+  .btn {
+    border: 3px solid var(--ink); background: var(--ink); color: var(--yellow);
+    font-family: var(--display); font-size: 26px; letter-spacing: .06em;
+    padding: 6px 18px; display: inline-flex; gap: 12px; align-items: center; white-space: nowrap;
+    transition: transform .15s;
+  }
+  .btn:hover { transform: translate(-2px, -2px) rotate(-1deg); }
+  .btn.ghost { background: transparent; color: var(--ink); }
+  .btn.ghost:hover { background: var(--pink); }
+  .status {
+    font-family: var(--mono); font-size: 12px; margin: 22px 0 0;
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  }
+  .status .ok { background: var(--ink); color: var(--yellow); padding: 0 6px; font-weight: 700; }
+  .rip { /* torn bottom edge */
+    position: absolute; left: 0; right: 0; bottom: -10px; height: 12px;
+    background: var(--yellow);
+    clip-path: polygon(0 0,4% 70%,8% 10%,13% 90%,19% 20%,24% 80%,31% 0,36% 60%,42% 15%,49% 95%,55% 25%,61% 70%,67% 5%,73% 85%,80% 20%,86% 75%,92% 10%,97% 65%,100% 0);
+  }
+  .tips {
+    border-top: 3px solid var(--ink); margin-top: 18px; padding-top: 12px;
+    display: flex; flex-wrap: wrap; gap: 8px 20px; font-family: var(--mono); font-size: 12px;
+  }
+  .tips span { display: inline-flex; gap: 6px; align-items: center; }
+
+  /* lower row */
+  .lower { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 40px; align-items: start; max-width: 1100px; }
+  .sec-h {
+    font-family: var(--display); font-size: 34px; letter-spacing: .06em; margin: 0 0 12px; line-height: 1;
+    color: var(--chalk);
+  }
+  .sec-h span { font-family: var(--marker); font-size: 16px; letter-spacing: 0; color: var(--pink); margin-left: 8px; }
+
+  /* crate = recent projects as a tracklist */
+  .crate { background: var(--wall-2); border: 2px solid #2e2630; }
+  .track {
+    display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 4px 14px;
+    align-items: center; padding: 12px 16px; border-bottom: 1px solid #2a232c;
+  }
+  .track:last-child { border-bottom: 0; }
+  .track .no { font-family: var(--display); font-size: 28px; color: var(--orange); line-height: 1; }
+  .track .name { font-weight: 700; font-size: 16px; overflow-wrap: anywhere; }
+  .track .path { font-family: var(--mono); font-size: 11px; color: var(--dim); overflow-wrap: anywhere; }
+  .track .right { display: grid; justify-items: end; gap: 4px; }
+  .track .ago { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+  .links { display: flex; gap: 12px; }
+  .links button {
+    background: none; border: 0; padding: 0; font-family: var(--marker); font-size: 14px;
+    color: var(--yellow); border-bottom: 2px solid var(--pink);
+  }
+  .links button:hover { color: var(--pink); }
+
+  /* mini flyers pinned to the wall */
+  .pinned { display: flex; flex-wrap: wrap; gap: 28px 22px; padding-top: 10px; }
+  .mini {
+    width: 200px; max-width: 100%; padding: 22px 16px 14px; border: 0; text-align: left;
+    transition: transform .2s;
+  }
+  .mini:nth-child(1) { background: var(--pink); transform: rotate(-3deg); }
+  .mini:nth-child(2) { background: var(--orange); transform: rotate(2.5deg); }
+  .mini:nth-child(3) { background: var(--chalk); transform: rotate(-1.2deg); }
+  .mini:hover { transform: rotate(0) scale(1.04); z-index: 3; }
+  .mini .tape { width: 60px; height: 20px; left: calc(50% - 30px); top: -10px; transform: rotate(-4deg); }
+  .mini h3 { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: .95; margin: 0 0 8px; }
+  .mini p { margin: 0; font-family: var(--mono); font-size: 11px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .mini .pill.needs { background: var(--ink); color: var(--yellow); }
+
+  /* ---------- SESSION VIEW ---------- */
+  .session { max-width: 900px; display: grid; gap: 20px; }
+  .session[hidden] { display: none !important; }
+  .back { background: none; border: 0; font-family: var(--marker); color: var(--orange); font-size: 16px; padding: 0; justify-self: start; }
+  .sheet { padding: 30px clamp(18px, 4vw, 40px) 22px; transform: rotate(-.3deg); background: var(--chalk); }
+  .sheet-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; border-bottom: 3px solid var(--ink); padding-bottom: 10px; margin-bottom: 16px; }
+  .sheet-head h2 { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 6vw, 56px); line-height: .9; margin: 0; }
+  .sheet-head .meta { font-family: var(--mono); font-size: 12px; align-self: end; }
+  .log { display: grid; gap: 14px; max-height: 52vh; overflow-y: auto; padding-right: 4px; position: relative; z-index: 1; }
+  .msg { max-width: 68ch; }
+  .msg .who { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+  .msg.you { justify-self: end; text-align: right; }
+  .msg.you .bubble { background: var(--pink); }
+  .msg .bubble { background: #fff; border: 2px solid var(--ink); padding: 8px 12px; margin-top: 3px; font-weight: 600; }
+  .msg.claude .bubble { background: var(--yellow); }
+  .msg code { font-family: var(--mono); font-size: 12px; background: rgba(0,0,0,.08); padding: 0 4px; }
+  .composer { display: flex; gap: 10px; margin-top: 18px; position: relative; z-index: 1; }
+  .composer textarea {
+    flex: 1; min-width: 0; resize: vertical; min-height: 48px; font: 600 15px var(--body);
+    border: 3px solid var(--ink); background: #fff; color: var(--ink); padding: 10px;
+  }
+  .note { font-family: var(--mono); font-size: 11px; color: var(--dim); margin: 0; }
+
+  @media (max-width: 900px) {
+    .lower { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    .app { grid-template-columns: 1fr; }
+    .setlist { border-right: 0; border-bottom: 2px dashed #3a313c; padding-inline: 16px; }
+    .meters { margin-top: 0; }
+    .hero { transform: none; }
+    .track { grid-template-columns: 28px minmax(0, 1fr); }
+    .track .right { grid-column: 2; justify-items: start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+
+<div class="app">
+  <aside class="setlist" aria-label="Sessions and projects">
+    <div class="brand"><b>BIMINI</b><span>studio</span></div>
+
+    <button class="btn-new" id="side-new" type="button">+ NEW FLYER <kbd>⌘N</kbd></button>
+
+    <section>
+      <h2 class="side-h">tonight's setlist</h2>
+      <ul class="side-list">
+        <li><button type="button" data-open="tour"><span class="t">Tour dates page</span><span class="pill needs">needs you</span><span class="m">bimini-website</span></button></li>
+        <li><button type="button" data-open="merch"><span class="t">Merch drop banner</span><span class="pill live">working</span><span class="m">bimini-website</span></button></li>
+        <li><button type="button" data-open="laylo"><span class="t">Laylo signup fix</span><span class="pill done">done</span><span class="m">bimini-website</span></button></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="side-h">projects</h2>
+      <ul class="side-list">
+        <li><button type="button"><span class="t">bimini-website</span><span class="when">6 min</span></button></li>
+        <li><button type="button"><span class="t">press-kit</span><span class="when">2 days</span></button></li>
+        <li><button type="button"><span class="t">setlist-tools</span><span class="when">1 wk</span></button></li>
+        <li class="scratched"><button type="button"><span class="t">old-myspace-theme</span><span class="when">2019</span></button></li>
+      </ul>
+    </section>
+
+    <section class="meters" aria-label="Usage limits">
+      <h2 class="side-h" style="margin:0">levels</h2>
+      <div class="meter-row"><span class="lbl">5 hr</span><div class="vu" id="vu-5h"></div><span class="pct">42%</span></div>
+      <div class="meter-row"><span class="lbl">week</span><div class="vu" id="vu-wk"></div><span class="pct" style="color:var(--pink)">91%</span></div>
+      <p class="meter-note"><b>Weekly limit almost used.</b> Resets Tue 11:30pm.</p>
+      <span class="sample-tag">sample numbers, not live</span>
+    </section>
+  </aside>
+
+  <main class="wall">
+    <!-- HOME -->
+    <div id="home" style="display:grid;gap:40px">
+      <article class="flyer hero">
+        <span class="tape l"></span><span class="tape r"></span>
+        <p class="eyebrow" id="greet">good evening, bimini —</p>
+        <h1>What are we <em>making</em> tonight?</h1>
+        <p class="lede">Start a fresh flyer in any folder, or pick up the one you left on the wall.</p>
+        <div class="hero-actions">
+          <div class="act">
+            <button class="btn" id="hero-new" type="button">NEW FLYER IN… <kbd>⌘N</kbd></button>
+            <small>choose a folder</small>
+          </div>
+          <div class="act">
+            <button class="btn ghost" type="button" data-open="tour">RESUME LAST</button>
+            <small>bimini-website · 6 min ago</small>
+          </div>
+        </div>
+        <p class="status"><span class="ok">✓ READY</span> Claude Code found at <span>/usr/local/bin/claude</span> <span style="opacity:.6">(example path)</span></p>
+        <div class="tips">
+          <span><kbd>⌘K</kbd> jump anywhere</span>
+          <span><kbd>⌘N</kbd> new flyer</span>
+          <span><kbd>⌘O</kbd> open a folder</span>
+          <span><kbd>⌘,</kbd> settings</span>
+        </div>
+        <span class="rip" aria-hidden="true"></span>
+      </article>
+
+      <div class="lower">
+        <section>
+          <h2 class="sec-h">THE CRATE <span>recent projects</span></h2>
+          <div class="crate">
+            <div class="track">
+              <span class="no">01</span>
+              <div><div class="name">bimini-website</div><div class="path">~/code/bimini-website</div></div>
+              <div class="right"><span class="ago">6 min ago</span><div class="links"><button type="button" class="js-new">new flyer</button><button type="button" data-open="tour">continue</button></div></div>
+            </div>
+            <div class="track">
+              <span class="no">02</span>
+              <div><div class="name">press-kit</div><div class="path">~/Documents/press-kit</div></div>
+              <div class="right"><span class="ago">2 days ago</span><div class="links"><button type="button" class="js-new">new flyer</button><button type="button" class="js-new">continue</button></div></div>
+            </div>
+            <div class="track">
+              <span class="no">03</span>
+              <div><div class="name">setlist-tools</div><div class="path">~/code/setlist-tools</div></div>
+              <div class="right"><span class="ago">1 week ago</span><div class="links"><button type="button" class="js-new">new flyer</button><button type="button" class="js-new">continue</button></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="sec-h">ON THE WALL <span>open sessions</span></h2>
+          <div class="pinned">
+            <button class="flyer mini" type="button" data-open="tour"><span class="tape"></span><h3>Tour dates page</h3><p>bimini-website · <span class="pill needs">needs you</span></p></button>
+            <button class="flyer mini" type="button" data-open="merch"><span class="tape"></span><h3>Merch drop banner</h3><p>bimini-website · working</p></button>
+            <button class="flyer mini" type="button" data-open="laylo"><span class="tape"></span><h3>Laylo signup fix</h3><p>bimini-website · done</p></button>
+          </div>
+        </section>
+      </div>
+      <p class="note">Mockup. Every project, session and number on this page is an example, not your real data.</p>
+    </div>
+
+    <!-- SESSION -->
+    <section class="session" id="session" hidden aria-live="polite">
+      <button class="back" id="back" type="button">← back to the wall (Esc)</button>
+      <article class="flyer sheet">
+        <span class="tape l"></span><span class="tape r"></span>
+        <header class="sheet-head">
+          <h2 id="s-title">Tour dates page</h2>
+          <span class="meta" id="s-meta">bimini-website · needs you</span>
+        </header>
+        <div class="log" id="log"></div>
+        <form class="composer" id="composer">
+          <label for="msg" class="sr" style="position:absolute;left:-9999px">Message</label>
+          <textarea id="msg" placeholder="Tell Claude what to do next…"></textarea>
+          <button class="btn" type="submit">SEND</button>
+        </form>
+      </article>
+      <p class="note">Mockup. Messages stay on this page. Nothing reaches Claude from here.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+(() => {
+  // VU meters
+  const vu = (id, pct) => {
+    const el = document.getElementById(id), lit = Math.round(pct / 100 * 16);
+    for (let i = 0; i < 16; i++) {
+      const b = document.createElement('i');
+      if (i < lit) b.className = 'on' + (i >= 13 ? ' red' : i >= 10 ? ' hot' : '');
+      el.appendChild(b);
+    }
+  };
+  vu('vu-5h', 42); vu('vu-wk', 91);
+
+  const h = new Date().getHours();
+  document.getElementById('greet').textContent =
+    (h < 5 ? 'up late, bimini —' : h < 12 ? 'good morning, bimini —' : h < 18 ? 'good afternoon, bimini —' : 'good evening, bimini —');
+
+  // Example sessions
+  const S = {
+    tour: { title: 'Tour dates page', meta: 'bimini-website · needs you', log: [
+      ['you', 'Add the fall tour dates to the site. Put ticket links next to each one.'],
+      ['claude', 'I added a tour section to <code>index.html</code> with a row per date and a ticket button on each. I styled it in <code>styles.css</code> to match your pink and yellow.'],
+      ['claude', 'One question before I finish: two of the dates don\'t have ticket links yet. Should I show "tickets soon" there, or hide those dates?']
+    ]},
+    merch: { title: 'Merch drop banner', meta: 'bimini-website · working', log: [
+      ['you', 'Put a banner across the top of the site for the merch drop Friday.'],
+      ['claude', 'I\'m building the banner now. It links to your store and has a countdown.']
+    ]},
+    laylo: { title: 'Laylo signup fix', meta: 'bimini-website · done', log: [
+      ['you', 'The mailing list button isn\'t working on my phone.'],
+      ['claude', 'Fixed. The button was covered by another element on small screens. I pushed the change to your branch.']
+    ]},
+    fresh: { title: 'New flyer', meta: 'pick a folder to start', log: [
+      ['claude', 'Blank flyer. What are we making?']
+    ]}
+  };
+
+  const home = document.getElementById('home'), sess = document.getElementById('session'),
+        log = document.getElementById('log'), msg = document.getElementById('msg');
+
+  const bubble = (who, html) => {
+    const d = document.createElement('div');
+    d.className = 'msg ' + who;
+    d.innerHTML = '<div class="who">' + (who === 'you' ? 'you' : 'claude') + '</div><div class="bubble"></div>';
+    d.querySelector('.bubble').innerHTML = html;
+    log.appendChild(d); log.scrollTop = log.scrollHeight;
+  };
+
+  const open = key => {
+    const s = S[key];
+    document.getElementById('s-title').textContent = s.title;
+    document.getElementById('s-meta').textContent = s.meta;
+    log.innerHTML = '';
+    s.log.forEach(([w, t]) => bubble(w, t));
+    home.style.display = 'none'; sess.hidden = false;
+    msg.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  };
+  const close = () => { sess.hidden = true; home.style.display = 'grid'; };
+
+  document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => open(b.dataset.open)));
+  document.querySelectorAll('#side-new, #hero-new, .js-new').forEach(b => b.addEventListener('click', () => open('fresh')));
+  document.getElementById('back').addEventListener('click', close);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !sess.hidden) close(); });
+
+  document.getElementById('composer').addEventListener('submit', e => {
+    e.preventDefault();
+    const t = msg.value.trim(); if (!t) return;
+    const safe = t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    bubble('you', safe); msg.value = '';
+    setTimeout(() => bubble('claude', 'This is a mockup, so I\'m not connected yet. In the real app your message would go to Claude Code here.'), 400);
+  });
+  msg.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('composer').requestSubmit(); }
+  });
+})();
+</script>
