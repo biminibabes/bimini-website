@@ -29,7 +29,8 @@ npm start
 ```
 
 `npm install` downloads Electron, the engine that turns the design into a Mac
-window (roughly 100–200 MB, approximate). It only has to do this once.
+window. It took about 300 MB on the Linux test machine; the Mac size may differ.
+It only has to do this once.
 
 ## Run it (after that)
 
