@@ -1,0 +1,15 @@
+{
+  "name": "bimini-studio",
+  "productName": "BIMINI studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A neon-punk desktop front end for the Claude Code you already have installed.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "electron": "44.4.5"
+  }
+}

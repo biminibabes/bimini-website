@@ -1,4 +1,5 @@
 <title>Bimini Flyerwall</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Karla:ital,wght@0,400;0,600;0,700;1,400&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -22,6 +23,7 @@
     --marker: "Permanent Marker", "Comic Sans MS", cursive;
     --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   }
+  [hidden] { display: none !important; }
   html, body { height: 100%; }
   body {
     background: var(--wall);
@@ -61,7 +63,7 @@
   }
   .brand span { font-family: var(--marker); color: var(--yellow); font-size: 15px; transform: rotate(-4deg); display: inline-block; }
   .btn-new {
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
     background: var(--yellow); color: var(--ink); border: 0;
     font-family: var(--display); font-size: 22px; letter-spacing: .08em;
     padding: 8px 14px; transform: rotate(-1deg); white-space: nowrap;
@@ -205,9 +207,10 @@
     width: 200px; max-width: 100%; padding: 22px 16px 14px; border: 0; text-align: left;
     transition: transform .2s;
   }
-  .mini:nth-child(1) { background: var(--pink); transform: rotate(-3deg); }
-  .mini:nth-child(2) { background: var(--orange); transform: rotate(2.5deg); }
-  .mini:nth-child(3) { background: var(--chalk); transform: rotate(-1.2deg); }
+  .mini.c0 { background: var(--pink); transform: rotate(-3deg); }
+  .mini.c1 { background: var(--orange); transform: rotate(2.5deg); }
+  .mini.c2 { background: var(--chalk); transform: rotate(-1.2deg); }
+  .mini.c3 { background: var(--yellow); transform: rotate(1.5deg); }
   .mini:hover { transform: rotate(0) scale(1.04); z-index: 3; }
   .mini .tape { width: 60px; height: 20px; left: calc(50% - 30px); top: -10px; transform: rotate(-4deg); }
   .mini h3 { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: .95; margin: 0 0 8px; }
@@ -237,6 +240,37 @@
   }
   .note { font-family: var(--mono); font-size: 11px; color: var(--dim); margin: 0; }
 
+
+  /* ---------- wiring additions ---------- */
+  .side-scroll { max-height: 34vh; overflow-y: auto; }
+  .side-empty { font-family: var(--mono); font-size: 11px; color: var(--dim); padding: 4px 8px; margin: 0; }
+  .pill.err { background: #4a0f22; color: var(--pink); }
+  .pill.idle { background: #2a232c; color: var(--dim); }
+  .meter-row .pct.unknown { color: var(--dim); font-size: 16px; }
+  .status.bad .ok { background: var(--pink); color: var(--ink); }
+  .status a { color: inherit; font-weight: 700; }
+  .mini h3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .wall-empty { font-family: var(--marker); color: var(--dim); font-size: 16px; margin: 0; }
+  .sheet-bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: -6px 0 14px; font-family: var(--mono); font-size: 12px; position: relative; z-index: 1; }
+  .sheet-bar label { font-weight: 700; }
+  .sheet-bar select { font: 700 12px var(--mono); border: 2px solid var(--ink); background: #fff; color: var(--ink); padding: 3px 6px; }
+  .sheet-bar .folder { opacity: .75; overflow-wrap: anywhere; }
+  .btn.small { font-size: 18px; padding: 2px 12px; border-width: 2px; }
+  .msg .bubble { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg.tool { font-family: var(--mono); font-size: 12px; opacity: .8; display: flex; gap: 8px; align-items: baseline; }
+  .msg.tool b { background: var(--ink); color: var(--chalk); padding: 0 6px; font-weight: 700; }
+  .msg.tool span { overflow-wrap: anywhere; }
+  .msg.sys .bubble { background: transparent; border-style: dashed; font-family: var(--mono); font-size: 12px; font-weight: 400; }
+  .working { font-family: var(--marker); font-size: 16px; animation: blink 1.2s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: .35; } }
+  .blocked { border: 3px solid var(--ink); background: var(--pink); padding: 12px 14px; display: grid; gap: 8px; position: relative; z-index: 1; margin-top: 14px; }
+  .blocked h3 { font-family: var(--display); font-weight: 400; font-size: 26px; margin: 0; line-height: 1; }
+  .blocked ul { margin: 0; padding-left: 18px; font-family: var(--mono); font-size: 12px; }
+  .blocked li { overflow-wrap: anywhere; }
+  .blocked .row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .blocked p { margin: 0; font-size: 13px; font-weight: 600; }
+  .composer textarea:disabled { opacity: .6; }
+
   @media (max-width: 900px) {
     .lower { grid-template-columns: 1fr; }
   }
@@ -256,39 +290,28 @@
 <div class="app">
   <aside class="setlist" aria-label="Sessions and projects">
     <div class="brand"><b>BIMINI</b><span>studio</span></div>
-
     <button class="btn-new" id="side-new" type="button">+ NEW FLYER <kbd>⌘N</kbd></button>
 
     <section>
       <h2 class="side-h">tonight's setlist</h2>
-      <ul class="side-list">
-        <li><button type="button" data-open="tour"><span class="t">Tour dates page</span><span class="pill needs">needs you</span><span class="m">bimini-website</span></button></li>
-        <li><button type="button" data-open="merch"><span class="t">Merch drop banner</span><span class="pill live">working</span><span class="m">bimini-website</span></button></li>
-        <li><button type="button" data-open="laylo"><span class="t">Laylo signup fix</span><span class="pill done">done</span><span class="m">bimini-website</span></button></li>
-      </ul>
+      <ul class="side-list side-scroll" id="setlist"></ul>
     </section>
 
     <section>
       <h2 class="side-h">projects</h2>
-      <ul class="side-list">
-        <li><button type="button"><span class="t">bimini-website</span><span class="when">6 min</span></button></li>
-        <li><button type="button"><span class="t">press-kit</span><span class="when">2 days</span></button></li>
-        <li><button type="button"><span class="t">setlist-tools</span><span class="when">1 wk</span></button></li>
-        <li class="scratched"><button type="button"><span class="t">old-myspace-theme</span><span class="when">2019</span></button></li>
-      </ul>
+      <ul class="side-list side-scroll" id="side-projects"></ul>
     </section>
 
     <section class="meters" aria-label="Usage limits">
       <h2 class="side-h" style="margin:0">levels</h2>
-      <div class="meter-row"><span class="lbl">5 hr</span><div class="vu" id="vu-5h"></div><span class="pct">42%</span></div>
-      <div class="meter-row"><span class="lbl">week</span><div class="vu" id="vu-wk"></div><span class="pct" style="color:var(--pink)">91%</span></div>
-      <p class="meter-note"><b>Weekly limit almost used.</b> Resets Tue 11:30pm.</p>
-      <span class="sample-tag">sample numbers, not live</span>
+      <div class="meter-row"><span class="lbl">5 hr</span><div class="vu" id="vu-5h"></div><span class="pct" id="pct-5h">–</span></div>
+      <div class="meter-row"><span class="lbl">week</span><div class="vu" id="vu-wk"></div><span class="pct" id="pct-wk">–</span></div>
+      <p class="meter-note" id="meter-note">Levels show up after your first message.</p>
+      <span class="sample-tag" id="demo-tag" hidden>preview: example data</span>
     </section>
   </aside>
 
   <main class="wall">
-    <!-- HOME -->
     <div id="home" style="display:grid;gap:40px">
       <article class="flyer hero">
         <span class="tape l"></span><span class="tape r"></span>
@@ -301,16 +324,15 @@
             <small>choose a folder</small>
           </div>
           <div class="act">
-            <button class="btn ghost" type="button" data-open="tour">RESUME LAST</button>
-            <small>bimini-website · 6 min ago</small>
+            <button class="btn ghost" id="resume-last" type="button">RESUME LAST</button>
+            <small id="resume-sub">nothing yet</small>
           </div>
         </div>
-        <p class="status"><span class="ok">✓ READY</span> Claude Code found at <span>/usr/local/bin/claude</span> <span style="opacity:.6">(example path)</span></p>
+        <p class="status" id="status"><span class="ok">…</span> looking for Claude Code</p>
         <div class="tips">
-          <span><kbd>⌘K</kbd> jump anywhere</span>
           <span><kbd>⌘N</kbd> new flyer</span>
           <span><kbd>⌘O</kbd> open a folder</span>
-          <span><kbd>⌘,</kbd> settings</span>
+          <span><kbd>Esc</kbd> back to the wall</span>
         </div>
         <span class="rip" aria-hidden="true"></span>
       </article>
@@ -318,132 +340,42 @@
       <div class="lower">
         <section>
           <h2 class="sec-h">THE CRATE <span>recent projects</span></h2>
-          <div class="crate">
-            <div class="track">
-              <span class="no">01</span>
-              <div><div class="name">bimini-website</div><div class="path">~/code/bimini-website</div></div>
-              <div class="right"><span class="ago">6 min ago</span><div class="links"><button type="button" class="js-new">new flyer</button><button type="button" data-open="tour">continue</button></div></div>
-            </div>
-            <div class="track">
-              <span class="no">02</span>
-              <div><div class="name">press-kit</div><div class="path">~/Documents/press-kit</div></div>
-              <div class="right"><span class="ago">2 days ago</span><div class="links"><button type="button" class="js-new">new flyer</button><button type="button" class="js-new">continue</button></div></div>
-            </div>
-            <div class="track">
-              <span class="no">03</span>
-              <div><div class="name">setlist-tools</div><div class="path">~/code/setlist-tools</div></div>
-              <div class="right"><span class="ago">1 week ago</span><div class="links"><button type="button" class="js-new">new flyer</button><button type="button" class="js-new">continue</button></div></div>
-            </div>
-          </div>
+          <div class="crate" id="crate"></div>
         </section>
-
         <section>
-          <h2 class="sec-h">ON THE WALL <span>open sessions</span></h2>
-          <div class="pinned">
-            <button class="flyer mini" type="button" data-open="tour"><span class="tape"></span><h3>Tour dates page</h3><p>bimini-website · <span class="pill needs">needs you</span></p></button>
-            <button class="flyer mini" type="button" data-open="merch"><span class="tape"></span><h3>Merch drop banner</h3><p>bimini-website · working</p></button>
-            <button class="flyer mini" type="button" data-open="laylo"><span class="tape"></span><h3>Laylo signup fix</h3><p>bimini-website · done</p></button>
-          </div>
+          <h2 class="sec-h">ON THE WALL <span>recent sessions</span></h2>
+          <div class="pinned" id="pinned"></div>
         </section>
       </div>
-      <p class="note">Mockup. Every project, session and number on this page is an example, not your real data.</p>
     </div>
 
-    <!-- SESSION -->
-    <section class="session" id="session" hidden aria-live="polite">
+    <section class="session" id="session" hidden>
       <button class="back" id="back" type="button">← back to the wall (Esc)</button>
       <article class="flyer sheet">
         <span class="tape l"></span><span class="tape r"></span>
         <header class="sheet-head">
-          <h2 id="s-title">Tour dates page</h2>
-          <span class="meta" id="s-meta">bimini-website · needs you</span>
+          <h2 id="s-title">New flyer</h2>
+          <span class="meta" id="s-meta"></span>
         </header>
-        <div class="log" id="log"></div>
+        <div class="sheet-bar">
+          <label for="mode">House rules</label>
+          <select id="mode">
+            <option value="manual">Ask me first</option>
+            <option value="acceptEdits">Let it edit files</option>
+            <option value="plan">Plan only, no changes</option>
+          </select>
+          <span class="folder" id="s-folder"></span>
+        </div>
+        <div class="log" id="log" aria-live="polite"></div>
+        <div class="blocked" id="blocked" hidden></div>
         <form class="composer" id="composer">
-          <label for="msg" class="sr" style="position:absolute;left:-9999px">Message</label>
-          <textarea id="msg" placeholder="Tell Claude what to do next…"></textarea>
-          <button class="btn" type="submit">SEND</button>
+          <label for="msg" style="position:absolute;left:-9999px">Message</label>
+          <textarea id="msg" placeholder="Tell Claude what to make…"></textarea>
+          <button class="btn" type="submit" id="send">SEND</button>
         </form>
       </article>
-      <p class="note">Mockup. Messages stay on this page. Nothing reaches Claude from here.</p>
+      <p class="note">Enter sends. Shift+Enter makes a new line.</p>
     </section>
   </main>
 </div>
-
-<script>
-(() => {
-  // VU meters
-  const vu = (id, pct) => {
-    const el = document.getElementById(id), lit = Math.round(pct / 100 * 16);
-    for (let i = 0; i < 16; i++) {
-      const b = document.createElement('i');
-      if (i < lit) b.className = 'on' + (i >= 13 ? ' red' : i >= 10 ? ' hot' : '');
-      el.appendChild(b);
-    }
-  };
-  vu('vu-5h', 42); vu('vu-wk', 91);
-
-  const h = new Date().getHours();
-  document.getElementById('greet').textContent =
-    (h < 5 ? 'up late, bimini —' : h < 12 ? 'good morning, bimini —' : h < 18 ? 'good afternoon, bimini —' : 'good evening, bimini —');
-
-  // Example sessions
-  const S = {
-    tour: { title: 'Tour dates page', meta: 'bimini-website · needs you', log: [
-      ['you', 'Add the fall tour dates to the site. Put ticket links next to each one.'],
-      ['claude', 'I added a tour section to <code>index.html</code> with a row per date and a ticket button on each. I styled it in <code>styles.css</code> to match your pink and yellow.'],
-      ['claude', 'One question before I finish: two of the dates don\'t have ticket links yet. Should I show "tickets soon" there, or hide those dates?']
-    ]},
-    merch: { title: 'Merch drop banner', meta: 'bimini-website · working', log: [
-      ['you', 'Put a banner across the top of the site for the merch drop Friday.'],
-      ['claude', 'I\'m building the banner now. It links to your store and has a countdown.']
-    ]},
-    laylo: { title: 'Laylo signup fix', meta: 'bimini-website · done', log: [
-      ['you', 'The mailing list button isn\'t working on my phone.'],
-      ['claude', 'Fixed. The button was covered by another element on small screens. I pushed the change to your branch.']
-    ]},
-    fresh: { title: 'New flyer', meta: 'pick a folder to start', log: [
-      ['claude', 'Blank flyer. What are we making?']
-    ]}
-  };
-
-  const home = document.getElementById('home'), sess = document.getElementById('session'),
-        log = document.getElementById('log'), msg = document.getElementById('msg');
-
-  const bubble = (who, html) => {
-    const d = document.createElement('div');
-    d.className = 'msg ' + who;
-    d.innerHTML = '<div class="who">' + (who === 'you' ? 'you' : 'claude') + '</div><div class="bubble"></div>';
-    d.querySelector('.bubble').innerHTML = html;
-    log.appendChild(d); log.scrollTop = log.scrollHeight;
-  };
-
-  const open = key => {
-    const s = S[key];
-    document.getElementById('s-title').textContent = s.title;
-    document.getElementById('s-meta').textContent = s.meta;
-    log.innerHTML = '';
-    s.log.forEach(([w, t]) => bubble(w, t));
-    home.style.display = 'none'; sess.hidden = false;
-    msg.focus({ preventScroll: true });
-    window.scrollTo(0, 0);
-  };
-  const close = () => { sess.hidden = true; home.style.display = 'grid'; };
-
-  document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => open(b.dataset.open)));
-  document.querySelectorAll('#side-new, #hero-new, .js-new').forEach(b => b.addEventListener('click', () => open('fresh')));
-  document.getElementById('back').addEventListener('click', close);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !sess.hidden) close(); });
-
-  document.getElementById('composer').addEventListener('submit', e => {
-    e.preventDefault();
-    const t = msg.value.trim(); if (!t) return;
-    const safe = t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-    bubble('you', safe); msg.value = '';
-    setTimeout(() => bubble('claude', 'This is a mockup, so I\'m not connected yet. In the real app your message would go to Claude Code here.'), 400);
-  });
-  msg.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('composer').requestSubmit(); }
-  });
-})();
-</script>
+<script src="renderer.js"></script>
