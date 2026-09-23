@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('bimini', {
   listSessions: () => ipcRenderer.invoke('list-sessions'),
   loadTranscript: id => ipcRenderer.invoke('load-transcript', id),
   pickFolder: () => ipcRenderer.invoke('pick-folder'),
+  pickClaude: () => ipcRenderer.invoke('pick-claude'),
   send: opts => ipcRenderer.invoke('send', opts),
   stop: runId => ipcRenderer.invoke('stop', runId),
   onEvent: fn => ipcRenderer.on('claude-event', (_e, ev) => fn(ev)),

@@ -39,6 +39,34 @@ cd ~/Documents/bimini-website/desktop-app
 npm start
 ```
 
+## Put it in your Dock (do this once)
+
+In Terminal:
+
+```bash
+cd ~/Documents/bimini-website/desktop-app
+git pull
+npm install
+npm run make-app
+```
+
+This builds **BIMINI studio.app** and copies it into your Applications folder.
+Then:
+
+1. Open **BIMINI studio** from Launchpad or Spotlight (⌘Space, type "bimini").
+2. While it's open, right-click its icon in the Dock and choose
+   **Options → Keep in Dock**.
+
+From now on, just click the icon. You don't need Terminal.
+
+**If it says "NOT FOUND":** apps opened from the Dock sometimes can't see where
+Claude Code lives. In Terminal, type `which claude` and note the folder it shows.
+Then click **FIND IT MYSELF** in the app and pick that file. In the file picker,
+⌘⇧G lets you type a folder path. The app remembers it after that.
+
+**After an update** (when I change the app), run the same four lines again.
+The new version replaces the old one.
+
 ## Using it
 
 - **New flyer** (⌘N): pick a folder, then tell Claude what to make.
@@ -55,8 +83,9 @@ npm start
 
 ## Honest limits
 
-- **It's tested on Linux, not on a Mac yet.** Your first run is the real Mac test.
-  If something breaks, copy the error from Terminal and send it to Claude.
+- **Most of the testing ran on Linux.** You've confirmed the window opens on your
+  Mac with `npm start`. The Dock app build (`npm run make-app`) hasn't run on a Mac
+  yet. If it errors, copy what Terminal says and send it to Claude.
 - **It uses your normal Claude plan.** Everything you do here counts toward the
   same limits as regular Claude Code.
 - **Two things rely on details Anthropic doesn't document:** the usage levels and
@@ -81,8 +110,13 @@ npm start
 | `lib/sessions.js` | Reads your past sessions from `~/.claude/projects` |
 | `app/index.html` | The design |
 | `app/renderer.js` | Makes the design work. Opened in a plain browser, it shows example data instead |
+| `scripts/make-app.mjs` | Builds the Dock app and installs it (`npm run make-app`) |
+| `build/icon.icns` | The app icon |
 
 Run `npm test` to check the parts that read Claude's output and your session files.
 
-Not done yet: a double-clickable app in your Dock. Right now you start it from
-Terminal with `npm start`. Packaging it as a real `.app` is the next step.
+`npm start` still works for trying changes without rebuilding the app.
+
+The app is signed only for your own Mac (no Apple developer account). That's
+fine for your own use, but it can't be sent to other people as-is; that would
+need an Apple Developer account and notarization.

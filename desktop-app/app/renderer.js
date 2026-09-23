@@ -73,8 +73,13 @@
       el.innerHTML = `<span class="ok">✓ READY</span> ${esc(s.version || 'Claude Code')} at <span>${esc(home(s.path))}</span>`;
     } else {
       el.classList.add('bad');
-      el.innerHTML = `<span class="ok">✗ NOT FOUND</span> Install Claude Code first. <a href="https://code.claude.com/docs" target="_blank" rel="noopener">Install guide</a> <button class="btn small ghost" type="button" id="recheck">CHECK AGAIN</button>`;
+      el.innerHTML = `<span class="ok">✗ NOT FOUND</span> Can't find Claude Code. If it's installed, point to it once and the app remembers. <button class="btn small ghost" type="button" id="locate">FIND IT MYSELF</button> <button class="btn small ghost" type="button" id="recheck">CHECK AGAIN</button> <a href="https://code.claude.com/docs" target="_blank" rel="noopener">Install guide</a><br><small id="locate-msg">Not sure where it is? In Terminal, type <code>which claude</code>.</small>`;
       $('recheck').onclick = loadStatus;
+      $('locate').onclick = async () => {
+        const ok = await api.pickClaude();
+        if (ok) loadStatus();
+        else $('locate-msg').textContent = 'That file didn\'t work as Claude Code. Pick the file named "claude".';
+      };
     }
     if (isDemo) $('demo-tag').hidden = false;
   }
@@ -326,6 +331,7 @@
         { role: 'claude', text: 'Added a tour section to `index.html` with a ticket button on each date.' },
       ],
       pickFolder: async () => '/Users/bimini/code/bimini-website',
+      pickClaude: async () => true,
       send: async ({ runId: id }) => {
         setTimeout(() => handler({ runId: id, kind: 'tool', name: 'Read', summary: 'index.html' }), 500);
         setTimeout(() => handler({ runId: id, kind: 'usage', fiveHour: { pct: 42, resetsAt: now / 1000 + 7200 }, week: { pct: 91, resetsAt: now / 1000 + 3 * 86400 } }), 700);

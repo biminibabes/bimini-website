@@ -6,6 +6,16 @@ const sessions = require('./lib/sessions');
 
 let win = null;
 let claudeBin = null;
+
+// Remembered choices, kept in the app's own settings folder.
+const settingsFile = () => path.join(app.getPath('userData'), 'settings.json');
+function readSettings() { try { return JSON.parse(fs.readFileSync(settingsFile(), 'utf8')); } catch { return {}; } }
+function writeSettings(patch) {
+  const next = { ...readSettings(), ...patch };
+  fs.mkdirSync(path.dirname(settingsFile()), { recursive: true });
+  fs.writeFileSync(settingsFile(), JSON.stringify(next, null, 2));
+}
+const locateClaude = () => claude.findClaude(readSettings().claudePath);
 const runs = new Map(); // runId -> handle
 
 function createWindow() {
@@ -51,7 +61,7 @@ function buildMenu() {
 }
 
 ipcMain.handle('status', () => {
-  claudeBin = claude.findClaude();
+  claudeBin = locateClaude();
   return { found: !!claudeBin, path: claudeBin, version: claudeBin ? claude.claudeVersion(claudeBin) : null };
 });
 
@@ -67,10 +77,25 @@ ipcMain.handle('pick-folder', async () => {
   return r.canceled ? null : r.filePaths[0];
 });
 
+ipcMain.handle('pick-claude', async () => {
+  const r = await dialog.showOpenDialog(win, {
+    title: 'Find the claude program',
+    message: 'Pick the file named "claude". In Finder, ⌘⇧G lets you type a folder like ~/.local/bin',
+    defaultPath: path.join(require('os').homedir(), '.local', 'bin'),
+    properties: ['openFile', 'showHiddenFiles', 'treatPackageAsDirectory'],
+  });
+  if (r.canceled) return false;
+  const picked = r.filePaths[0];
+  if (claude.findClaude(picked) !== picked || !claude.claudeVersion(picked)) return false;
+  writeSettings({ claudePath: picked });
+  claudeBin = picked;
+  return true;
+});
+
 const MODES = new Set(['manual', 'acceptEdits', 'plan']);
 
 ipcMain.handle('send', (_e, { runId, cwd, text, sessionId, mode, allowedTools }) => {
-  if (!claudeBin) claudeBin = claude.findClaude();
+  if (!claudeBin) claudeBin = locateClaude();
   if (!claudeBin) throw new Error('Claude Code is not installed, or the app cannot find it.');
   if (!cwd || !fs.existsSync(cwd) || !fs.statSync(cwd).isDirectory()) throw new Error('That folder no longer exists.');
   if (typeof runId !== 'string' || runs.has(runId)) throw new Error('Bad run id.');
@@ -91,6 +116,10 @@ ipcMain.handle('send', (_e, { runId, cwd, text, sessionId, mode, allowedTools })
 ipcMain.handle('stop', (_e, runId) => { runs.get(runId)?.stop(); });
 
 app.whenReady().then(() => {
+  // When run with `npm start` the Dock would show Electron's icon; use ours.
+  if (process.platform === 'darwin' && !app.isPackaged) {
+    try { app.dock.setIcon(path.join(__dirname, 'build', 'icon.png')); } catch {}
+  }
   buildMenu();
   createWindow();
   app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });

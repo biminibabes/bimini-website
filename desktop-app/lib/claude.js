@@ -12,11 +12,16 @@ const path = require('path');
 let cachedPath = null;
 function loginPath() {
   if (cachedPath) return cachedPath;
+  const h = os.homedir();
   const extra = [
-    path.join(os.homedir(), '.local/bin'),
-    path.join(os.homedir(), '.claude/local'),
+    path.join(h, '.local/bin'),
+    path.join(h, '.claude/local'),
+    path.join(h, '.npm-global/bin'),
+    path.join(h, '.volta/bin'),
+    path.join(h, '.bun/bin'),
     '/opt/homebrew/bin',
     '/usr/local/bin',
+    ...nvmBins(h),
   ];
   let shellPath = '';
   try {
@@ -32,18 +37,34 @@ function loginPath() {
   return cachedPath;
 }
 
-function findClaude() {
+// Node installed with nvm keeps each version in its own folder; newest first.
+function nvmBins(h) {
+  const dir = path.join(h, '.nvm/versions/node');
+  try {
+    return fs.readdirSync(dir).sort((a, b) => b.localeCompare(a, undefined, { numeric: true }))
+      .map(v => path.join(dir, v, 'bin'));
+  } catch { return []; }
+}
+
+const isRunnable = p => { try { fs.accessSync(p, fs.constants.X_OK); return fs.statSync(p).isFile(); } catch { return false; } };
+
+// `preferred` is a location you picked yourself in the app; it wins if it still works.
+function findClaude(preferred) {
+  if (preferred && isRunnable(preferred)) return preferred;
   for (const dir of loginPath().split(':')) {
     const p = path.join(dir, 'claude');
-    try { fs.accessSync(p, fs.constants.X_OK); return p; } catch { /* keep looking */ }
+    if (isRunnable(p)) return p;
   }
   return null;
 }
 
+// Claude installed through npm needs `node`, which usually sits right next to it.
+const envFor = bin => ({ ...process.env, PATH: [path.dirname(bin), loginPath()].join(':') });
+
 function claudeVersion(bin) {
   try {
     return execFileSync(bin, ['--version'], {
-      encoding: 'utf8', timeout: 10000, env: { ...process.env, PATH: loginPath() },
+      encoding: 'utf8', timeout: 10000, env: envFor(bin),
     }).trim();
   } catch { return null; }
 }
@@ -121,7 +142,7 @@ function allowRule(name, input = {}) {
 // Run one turn. Returns a handle with stop(). Calls onEvent for each event.
 function runTurn({ bin, cwd, text, sessionId, mode, allowedTools }, onEvent) {
   const child = spawn(bin, buildArgs({ sessionId, mode, allowedTools }), {
-    cwd, env: { ...process.env, PATH: loginPath() },
+    cwd, env: envFor(bin),
   });
   let buf = '', errBuf = '', finished = false;
   child.stdout.setEncoding('utf8');
